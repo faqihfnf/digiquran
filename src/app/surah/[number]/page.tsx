@@ -1,13 +1,15 @@
 "use client";
 
+// --- IMPORTS ---
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, BookmarkIcon } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useBookmarks } from "@/hooks/useBookmark"; // Pastikan path ini benar
 
-// Define the shape of Ayat data
+// --- INTERFACE DEFINITIONS ---
 interface Ayat {
   nomorAyat: number;
   teksArab: string;
@@ -22,7 +24,6 @@ interface Ayat {
   };
 }
 
-// Define the shape of Surah detail data
 interface SurahDetail {
   nomor: number;
   nama: string;
@@ -41,12 +42,16 @@ interface SurahDetail {
   ayat: Ayat[];
 }
 
+// --- COMPONENT DEFINITION ---
 export default function SurahDetailPage() {
+  // --- HOOKS INITIALIZATION ---
   const params = useParams();
   const nomorSurah = params.number as string;
   const [currentlyPlaying, setCurrentlyPlaying] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { toggleBookmark, isBookmarked } = useBookmarks();
 
+  // --- DATA FETCHING ---
   const { data, isLoading, isError } = useQuery<SurahDetail>({
     queryKey: ["surah-detail", nomorSurah],
     queryFn: async () => {
@@ -55,44 +60,55 @@ export default function SurahDetailPage() {
       );
       return response.data.data;
     },
+    refetchOnWindowFocus: false, // Mencegah refetch yang tidak perlu
   });
 
+  // --- EFFECT FOR SCROLL-TO-AYAT ---
+  useEffect(() => {
+    // Jalankan hanya jika data sudah selesai dimuat
+    if (!isLoading && data) {
+      const hash = window.location.hash; // cth: #ayat-5
+      if (hash) {
+        const element = document.querySelector(hash);
+        if (element) {
+          // Scroll ke elemen dengan animasi halus dan posisikan di tengah
+          element.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
+      }
+    }
+  }, [isLoading, data]); // Dependencies: jalankan saat status loading atau data berubah
+
+  // --- AUDIO PLAYER FUNCTION ---
   const playAudio = (audioUrl: string, ayatNumber: number) => {
-    // Stop current audio if playing
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
     }
-
-    // If clicking the same ayat that's currently playing, stop it
     if (currentlyPlaying === ayatNumber) {
       setCurrentlyPlaying(null);
       return;
     }
-
-    // Create new audio element and play
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
     setCurrentlyPlaying(ayatNumber);
-
     audio.play().catch((error) => {
       console.error("Error playing audio:", error);
       setCurrentlyPlaying(null);
     });
-
-    // Reset state when audio ends
     audio.onended = () => {
       setCurrentlyPlaying(null);
       audioRef.current = null;
     };
-
-    // Handle audio errors
     audio.onerror = () => {
       setCurrentlyPlaying(null);
       audioRef.current = null;
     };
   };
 
+  // --- LOADING AND ERROR STATES ---
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
@@ -122,17 +138,26 @@ export default function SurahDetailPage() {
     );
   }
 
+  // --- RENDER COMPONENT ---
   return (
     <div className="min-h-screen bg-slate-900 text-white">
       <main className="container mx-auto p-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
-          <Link
-            href="/"
-            className="inline-flex items-center text-slate-400 hover:text-white mb-4 transition-colors">
-            <ArrowLeftIcon className="w-5 h-5 mr-2" />
-            Kembali ke Daftar Surah
-          </Link>
+          <div className="flex justify-between items-center mb-4">
+            <Link
+              href="/"
+              className="inline-flex items-center text-slate-400 hover:text-white transition-colors">
+              <ArrowLeftIcon className="w-5 h-5 mr-2" />
+              Kembali ke Daftar Surah
+            </Link>
+            <Link
+              href="/bookmarks"
+              className="inline-flex items-center text-slate-400 hover:text-white transition-colors">
+              <BookmarkIcon className="w-5 h-5 mr-2" />
+              Lihat Bookmark
+            </Link>
+          </div>
 
           <div className="text-center bg-slate-800 rounded-lg p-6 border border-slate-700">
             <h1 className="text-3xl font-bold mb-2">{data.namaLatin}</h1>
@@ -153,72 +178,101 @@ export default function SurahDetailPage() {
 
         {/* Ayat List */}
         <div className="space-y-6">
-          {data.ayat.map((ayat) => (
-            <div
-              key={ayat.nomorAyat}
-              className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-              {/* Ayat Number and Play Button */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center justify-center h-8 w-8 bg-slate-700 rounded-full text-sm font-bold">
-                  {ayat.nomorAyat}
+          {data.ayat.map((ayat) => {
+            const bookmarked = isBookmarked(data.nomor, ayat.nomorAyat);
+            return (
+              <div
+                key={ayat.nomorAyat}
+                id={`ayat-${ayat.nomorAyat}`} // ID untuk target scroll
+                className="bg-slate-800 rounded-lg p-6 border border-slate-700">
+                {/* Ayat Number and Actions (Play & Bookmark) */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-center h-8 w-8 bg-slate-700 rounded-full text-sm font-bold">
+                    {ayat.nomorAyat}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {/* Tombol Bookmark */}
+                    <button
+                      onClick={() =>
+                        toggleBookmark({
+                          nomorSurah: data.nomor,
+                          namaSurah: data.namaLatin,
+                          nomorAyat: ayat.nomorAyat,
+                          teksArab: ayat.teksArab,
+                        })
+                      }
+                      title={bookmarked ? "Hapus Bookmark" : "Tambah Bookmark"}
+                      className="p-2 rounded-lg text-slate-300 hover:bg-slate-600 transition-colors">
+                      <BookmarkIcon
+                        className={`w-5 h-5 ${
+                          bookmarked
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-slate-400"
+                        }`}
+                      />
+                    </button>
+                    {/* Tombol Play Audio */}
+                    <button
+                      onClick={() =>
+                        playAudio(ayat.audio["01"], ayat.nomorAyat)
+                      }
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                        currentlyPlaying === ayat.nomorAyat
+                          ? "bg-green-600 hover:bg-green-700 text-white"
+                          : "bg-slate-700 hover:bg-slate-600 text-slate-300"
+                      }`}
+                      title={
+                        currentlyPlaying === ayat.nomorAyat
+                          ? "Stop Audio"
+                          : "Play Audio"
+                      }>
+                      {currentlyPlaying === ayat.nomorAyat ? (
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          viewBox="0 0 24 24">
+                          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                        </svg>
+                      ) : (
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      )}
+                      <span className="text-sm">
+                        {currentlyPlaying === ayat.nomorAyat ? "Stop" : "Play"}
+                      </span>
+                    </button>
+                  </div>
                 </div>
-                <button
-                  onClick={() => playAudio(ayat.audio["01"], ayat.nomorAyat)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                    currentlyPlaying === ayat.nomorAyat
-                      ? "bg-green-600 hover:bg-green-700 text-white"
-                      : "bg-slate-700 hover:bg-slate-600 text-slate-300"
-                  }`}
-                  title={
-                    currentlyPlaying === ayat.nomorAyat
-                      ? "Stop Audio"
-                      : "Play Audio"
-                  }>
-                  {currentlyPlaying === ayat.nomorAyat ? (
-                    <svg
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 24 24">
-                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-                    </svg>
-                  ) : (
-                    <svg
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  )}
-                  <span className="text-sm">
-                    {currentlyPlaying === ayat.nomorAyat ? "Stop" : "Play"}
-                  </span>
-                </button>
-              </div>
 
-              {/* Arabic Text */}
-              <div className="text-right mb-4">
-                <p
-                  className="text-2xl leading-loose font-mono text-slate-200"
-                  dir="rtl">
-                  {ayat.teksArab}
-                </p>
-              </div>
+                {/* Arabic Text */}
+                <div className="text-right mb-4">
+                  <p
+                    className="text-2xl leading-loose font-mono text-slate-200"
+                    dir="rtl">
+                    {ayat.teksArab}
+                  </p>
+                </div>
 
-              {/* Latin Text */}
-              <div className="mb-4">
-                <p className="text-slate-400 italic leading-relaxed">
-                  {ayat.teksLatin}
-                </p>
-              </div>
+                {/* Latin Text */}
+                <div className="mb-4">
+                  <p className="text-slate-400 italic leading-relaxed">
+                    {ayat.teksLatin}
+                  </p>
+                </div>
 
-              {/* Indonesian Translation */}
-              <div className="mb-4">
-                <p className="text-slate-200 leading-relaxed">
-                  {ayat.teksIndonesia}
-                </p>
+                {/* Indonesian Translation */}
+                <div className="mb-4">
+                  <p className="text-slate-200 leading-relaxed">
+                    {ayat.teksIndonesia}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </main>
     </div>
