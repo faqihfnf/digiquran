@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Search } from "lucide-react";
+import { BookmarkIcon, Search } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -38,12 +38,16 @@ export default function Home() {
   //# Render ketika data masih loading atau error saat mengambil data dari API
   if (isLoading)
     return (
-      <h1 className="text-center mt-20 text-white text-2xl">Loading...</h1>
+      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+        </div>
+      </div>
     );
   if (isError)
     return (
-      <h1 className="text-center mt-20 text-white text-2xl">
-        Error loading data
+      <h1 className="text-center mt-20 text-red-500 text-2xl">
+        Gagal memuat daftar surah. Silakan coba lagi.
       </h1>
     );
 
@@ -51,9 +55,14 @@ export default function Home() {
     <div className="min-h-screen bg-slate-900 text-white">
       <main className="container mx-auto p-4 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">{"Al-Qur'an"}</h1>
-          <p className="text-slate-400">
-            Daftar Surah {"Al-Qur'an"} dengan Terjemahan Indonesia
+          <h1 className="xl:text-7xl md:text-6xl text-4xl bg-gradient-to-l from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-md font-extrabold text-transparent h-20 mt-10 mb-1">
+            Al-Qur'an Digital
+          </h1>
+          <p className="text-slate-200 text-lg">
+            Aplikasi Quran Digital dengan{" "}
+            <span className="bg-cyan-400 rounded-lg px-0.5">Tafsir</span> dan{" "}
+            <span className="bg-emerald-400 rounded-lg px-0.5">Bookmark</span>{" "}
+            Ayat
           </p>
         </div>
 
@@ -73,6 +82,14 @@ export default function Home() {
           </div>
         </div>
 
+        <div className="xl:pl-12 pb-2">
+          <Link
+            href="/bookmarks"
+            className="inline-flex items-center text-slate-100 font-semibold transition-colors hover:text-indigo-500">
+            <BookmarkIcon className="w-6 h-6 mr-2" />
+            <span className="text-lg ">Lihat Bookmark</span>
+          </Link>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
           {/* Render daftar surah berdasarkan pencarian surah */}
           {filteredSurah && filteredSurah.length > 0 ? (
@@ -105,8 +122,7 @@ export default function Home() {
           ) : (
             <div className="col-span-full text-center text-slate-400 py-10">
               {/* Render pesan jika surah tidak ditemukan */}
-              <p className="text-lg">Surah tidak ditemukan.</p>
-              <p className="text-sm">Silakan coba kata kunci lain.</p>
+              <p className="text-2xl">Surah tidak ditemukan.</p>
             </div>
           )}
         </div>

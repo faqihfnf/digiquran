@@ -2,14 +2,22 @@
 
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { ArrowLeftIcon, BookmarkIcon, BookOpen } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  BookmarkIcon,
+  BookOpen,
+  Globe,
+  NotebookText,
+  Pause,
+  Play,
+  StopCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useBookmarks } from "@/hooks/useBookmark";
 import TafsirModal from "@/components/TafsirModal";
 
-// --- INTERFACE DEFINITIONS ---
 interface Ayat {
   nomorAyat: number;
   teksArab: string;
@@ -48,9 +56,7 @@ interface TafsirData {
   tafsir: Tafsir[];
 }
 
-// --- COMPONENT DEFINITION ---
 export default function SurahDetailPage() {
-  // --- HOOKS INITIALIZATION ---
   const params = useParams();
   const nomorSurah = params.number as string;
   const [currentlyPlaying, setCurrentlyPlaying] = useState<number | null>(null);
@@ -58,7 +64,7 @@ export default function SurahDetailPage() {
   const { toggleBookmark, isBookmarked } = useBookmarks();
   const [selectedTafsir, setSelectedTafsir] = useState<Tafsir | null>(null);
 
-  // --- DATA FETCHING ---
+  //# Fetching data Surah dan Tafsir menggunakan React Query
   const {
     data,
     isLoading: isSurahLoading,
@@ -90,7 +96,7 @@ export default function SurahDetailPage() {
     enabled: !!nomorSurah,
   });
 
-  // --- EFFECT FOR SCROLL-TO-AYAT ---
+  //# Scroll ke ayat tertentu jika ada hash di URL
   useEffect(() => {
     if (!isSurahLoading && data) {
       const hash = window.location.hash;
@@ -103,7 +109,7 @@ export default function SurahDetailPage() {
     }
   }, [isSurahLoading, data]);
 
-  // --- FUNCTIONS ---
+  //# Fungsi untuk memutar audio
   const playAudio = (audioUrl: string, ayatNumber: number) => {
     if (audioRef.current) {
       audioRef.current.pause();
@@ -138,13 +144,12 @@ export default function SurahDetailPage() {
     }
   };
 
-  // --- LOADING AND ERROR STATES ---
+  //# Render ketika data masih loading
   if (isSurahLoading || isTafsirLoading) {
     return (
       <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-lg">Memuat surah dan tafsir...</p>
         </div>
       </div>
     );
@@ -168,7 +173,6 @@ export default function SurahDetailPage() {
     );
   }
 
-  // --- RENDER COMPONENT ---
   return (
     <>
       <div className="min-h-screen bg-slate-900 text-white">
@@ -178,15 +182,15 @@ export default function SurahDetailPage() {
             <div className="flex justify-between items-center mb-4">
               <Link
                 href="/"
-                className="inline-flex items-center text-slate-400 hover:text-white transition-colors">
+                className="inline-flex items-center text-slate-100 hover:text-indigo-500 transition-colors">
                 <ArrowLeftIcon className="w-5 h-5 mr-2" />
-                Kembali ke Daftar Surah
+                Kembali
               </Link>
               <Link
                 href="/bookmarks"
-                className="inline-flex items-center text-slate-400 hover:text-white transition-colors">
-                <BookmarkIcon className="w-5 h-5 mr-2" />
-                Lihat Bookmark
+                className="inline-flex items-center text-slate-100 hover:text-indigo-500 transition-colors">
+                <BookmarkIcon className="w-5 h-5 mr-1" />
+                <span className="mt-1">Bookmark</span>
               </Link>
             </div>
             <div className="text-center bg-slate-800 rounded-lg p-6 border border-slate-700">
@@ -196,9 +200,15 @@ export default function SurahDetailPage() {
               </p>
               <p className="text-slate-400 mb-2">{data.arti}</p>
               <div className="flex justify-center gap-4 text-sm text-slate-500">
-                <span>{data.jumlahAyat} ayat</span>
+                <span className="flex items-center">
+                  <NotebookText className="w-4 h-4 mr-1" />
+                  {data.jumlahAyat} Ayat
+                </span>
                 <span>•</span>
-                <span>{data.tempatTurun}</span>
+                <span className="flex items-center">
+                  <Globe className="w-4 h-4 mr-1" />
+                  {data.tempatTurun}
+                </span>
               </div>
               <p
                 className="text-slate-400 mt-2 text-justify"
@@ -223,7 +233,7 @@ export default function SurahDetailPage() {
                       <button
                         onClick={() => handleShowTafsir(ayat.nomorAyat)}
                         title="Lihat Tafsir"
-                        className="p-2 rounded-lg text-slate-400 hover:text-sky-400 hover:bg-slate-600 transition-colors">
+                        className="p-2 rounded-lg text-slate-400 hover:text-sky-400 hover:bg-slate-600 transition-colors cursor-pointer">
                         <BookOpen className="w-5 h-5" />
                       </button>
                       <button
@@ -238,12 +248,12 @@ export default function SurahDetailPage() {
                         title={
                           bookmarked ? "Hapus Bookmark" : "Tambah Bookmark"
                         }
-                        className="p-2 rounded-lg text-slate-300 hover:bg-slate-600 transition-colors">
+                        className="p-2 rounded-lg text-slate-400 hover:bg-slate-600 hover:text-yellow-500 transition-colors cursor-pointer ">
                         <BookmarkIcon
                           className={`w-5 h-5 ${
                             bookmarked
                               ? "fill-yellow-400 text-yellow-400"
-                              : "text-slate-400"
+                              : "hover:text-yellow-500"
                           }`}
                         />
                       </button>
@@ -253,8 +263,8 @@ export default function SurahDetailPage() {
                         }
                         className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
                           currentlyPlaying === ayat.nomorAyat
-                            ? "bg-green-600 hover:bg-green-700 text-white"
-                            : "bg-slate-700 hover:bg-slate-600 text-slate-300"
+                            ? "bg-red-600 hover:bg-red-700 text-white cursor-pointer animate-pulse"
+                            : "bg-slate-700 hover:bg-slate-600 text-slate-300 cursor-pointer"
                         }`}
                         title={
                           currentlyPlaying === ayat.nomorAyat
@@ -262,19 +272,9 @@ export default function SurahDetailPage() {
                             : "Play Audio"
                         }>
                         {currentlyPlaying === ayat.nomorAyat ? (
-                          <svg
-                            className="w-4 h-4"
-                            fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-                          </svg>
+                          <StopCircle className="w-4 h-4" />
                         ) : (
-                          <svg
-                            className="w-4 h-4"
-                            fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
+                          <Play className="w-4 h-4" />
                         )}
                         <span className="text-sm">
                           {currentlyPlaying === ayat.nomorAyat

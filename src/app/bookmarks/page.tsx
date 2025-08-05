@@ -26,7 +26,7 @@ export default function BookmarksPage() {
             Kembali
           </Link>
           <span className="text-slate-400">
-            Total Bookmark : <strong>{bookmarks.length}</strong> Ayat
+            Bookmark : <strong>{bookmarks.length}</strong> Ayat
           </span>
         </div>
 
@@ -53,11 +53,12 @@ export default function BookmarksPage() {
                       <Trash2Icon className="w-5 h-5" />
                     </button>
                   </div>
-                  <p
+                  <Link
+                    href={`/surah/${item.nomorSurah}#ayat-${item.nomorAyat}`}
                     className="text-xl leading-loose font-mono text-slate-200 text-right"
                     dir="rtl">
                     {item.teksArab}
-                  </p>
+                  </Link>
                 </div>
               </div>
             ))
