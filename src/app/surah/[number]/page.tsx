@@ -166,19 +166,19 @@ export default function SurahDetailPage() {
               <div className="mb-6 flex items-center justify-between">
                 <Link
                   href="/"
-                  className="flex items-center gap-2 text-slate-300 transition-colors hover:text-cyan-400">
+                  className="flex items-center font-semibold gap-2 text-slate-300 transition-colors hover:text-cyan-400">
                   <ArrowLeftIcon className="h-5 w-5" />
                   <span>Daftar Surah</span>
                 </Link>
                 <Link
                   href="/bookmarks"
-                  className="flex items-center gap-2 text-slate-300 transition-colors hover:text-cyan-400">
+                  className="flex items-center font-semibold gap-2 text-slate-300 transition-colors hover:text-cyan-400">
                   <BookmarkIcon className="h-5 w-5" />
                   <span>Bookmark</span>
                 </Link>
               </div>
               <div className="text-center">
-                <p className="text-lg font-semibold text-cyan-400">
+                <p className="text-3xl font-semibold tracking-tight bg-gradient-to-r from-cyan-300 to-emerald-400 bg-clip-text text-transparent ">
                   {data.namaLatin}
                 </p>
                 <h1 className="my-2 text-5xl font-bold font-mono bg-gradient-to-br from-slate-50 to-slate-300 bg-clip-text text-transparent">
@@ -230,7 +230,7 @@ export default function SurahDetailPage() {
                     <button
                       onClick={() => handleShowTafsir(ayat.nomorAyat)}
                       title="Lihat Tafsir"
-                      className="flex items-center gap-2 rounded-lg p-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-cyan-400">
+                      className="flex items-center gap-2 rounded-lg p-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-cyan-400 cursor-pointer">
                       <BookOpen className="h-5 w-5" />
                     </button>
                     <button
@@ -243,7 +243,7 @@ export default function SurahDetailPage() {
                         })
                       }
                       title={bookmarked ? "Hapus Bookmark" : "Tandai Ayat"}
-                      className="flex items-center gap-2 rounded-lg p-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-yellow-400">
+                      className="flex items-center gap-2 rounded-lg p-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-yellow-400 cursor-pointer">
                       <BookmarkIcon
                         className={`h-5 w-5 ${
                           bookmarked ? "fill-yellow-400 text-yellow-400" : ""
@@ -259,7 +259,7 @@ export default function SurahDetailPage() {
                           ? "Hentikan"
                           : "Putar Audio"
                       }
-                      className={`flex w-24 items-center justify-center gap-2 rounded-lg p-2 text-sm transition-colors ${
+                      className={`flex w-24 items-center justify-center gap-2 rounded-lg p-2 text-sm transition-colors cursor-pointer ${
                         currentlyPlaying === ayat.nomorAyat
                           ? "bg-red-500/20 text-red-400"
                           : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200"

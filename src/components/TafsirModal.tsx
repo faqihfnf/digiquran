@@ -1,6 +1,7 @@
 "use client";
 
-import { BookOpen, X } from "lucide-react";
+import { BookOpenText, X } from "lucide-react";
+import { useEffect } from "react";
 
 interface TafsirModalProps {
   isOpen: boolean;
@@ -17,39 +18,61 @@ export default function TafsirModal({
   ayatNumber,
   tafsirText,
 }: TafsirModalProps) {
-  if (!isOpen) return null;
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [onClose]);
+
+  if (!isOpen) {
+    // Tidak merender apapun jika tidak terbuka
+    return null;
+  }
 
   return (
     // Backdrop
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 transition-opacity duration-300">
-      {/* Modal Content */}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-modal-show">
+      {/* Konten Modal */}
       <div
-        onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup saat mengklik di dalam konten
-        className="relative w-11/12 max-w-2xl transform rounded-lg bg-slate-800 p-6 text-white shadow-xl transition-all duration-300 border border-slate-700">
-        {/* Header */}
-        <div className="flex items-start justify-between pb-4 border-b border-slate-700">
-          <div className="flex items-center gap-3">
-            <BookOpen className="h-6 w-6 text-sky-400" />
-            <div>
-              <h3 className="text-xl font-bold">Tafsir {surahName}</h3>
-              <p className="text-sm text-slate-400">Ayat {ayatNumber}</p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-1 rounded-full text-slate-400 hover:bg-slate-700 hover:text-white transition-colors"
-            title="Tutup">
-            <X className="h-6 w-6" />
-          </button>
-        </div>
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-11/12 max-w-2xl transform overflow-hidden rounded-2xl border border-slate-700/80 bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900 text-white shadow-2xl shadow-cyan-500/10 animate-modal-content-show">
+        {/* Efek Glow Dekoratif */}
+        <div className="absolute -top-1/4 -right-1/4 h-1/2 w-1/2 bg-cyan-400/10 rounded-full blur-3xl -z-10"></div>
 
-        {/* Body */}
-        <div className="mt-4 max-h-[60vh] overflow-y-auto pr-2">
-          <p className="text-base leading-relaxed text-slate-300 whitespace-pre-wrap">
-            {tafsirText}
-          </p>
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-start justify-between pb-4 border-b border-slate-800">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-cyan-500/20 bg-cyan-500/10">
+                <BookOpenText className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-slate-100">
+                  Tafsir {surahName}
+                </h3>
+                <p className="text-sm text-slate-400">Ayat {ayatNumber}</p>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-700 hover:text-white"
+              title="Tutup (Esc)">
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+
+          {/* Body */}
+          <div className="mt-5 max-h-[60vh] overflow-y-auto pr-3">
+            <p className="whitespace-pre-wrap text-lg leading-relaxed text-slate-300">
+              {tafsirText}
+            </p>
+          </div>
         </div>
       </div>
     </div>
