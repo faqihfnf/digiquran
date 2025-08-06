@@ -54,12 +54,12 @@ export default function BookmarksPage() {
                     <button
                       onClick={(e) => handleDelete(e, item)}
                       title="Hapus Bookmark"
-                      className="flex-shrink-0 rounded-full p-2 text-slate-500 transition-colors hover:bg-red-500/10 hover:text-red-400">
+                      className="flex-shrink-0 rounded-full p-2 text-slate-500 transition-colors hover:bg-red-500/10 hover:text-red-400 cursor-pointer">
                       <Trash2Icon className="h-5 w-5" />
                     </button>
                   </div>
                   <p
-                    className="mt-4 font-mono text-2xl leading-loose text-slate-200 text-right"
+                    className="text-lg sm:text-2xl mt-4 leading-16 text-slate-200 font-amiri text-justify"
                     dir="rtl">
                     {item.teksArab}
                   </p>

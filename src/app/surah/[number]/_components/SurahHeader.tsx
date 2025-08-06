@@ -21,7 +21,7 @@ export default function SurahHeader({ data }: SurahHeaderProps) {
           </Link>
           <Link
             href="/bookmarks"
-            className="flex items-center font-semibold gap-2 text-slate-300 transition-colors hover:text-cyan-400">
+            className="flex items-center font-semibold gap-2 text-slate-300 transition-colors  hover:text-cyan-400">
             <BookmarkIcon className="h-5 w-5" />
             <span>Bookmark</span>
           </Link>
@@ -30,7 +30,7 @@ export default function SurahHeader({ data }: SurahHeaderProps) {
           <p className="text-3xl font-semibold tracking-tight bg-gradient-to-r from-cyan-300 to-emerald-400 bg-clip-text text-transparent">
             {data.namaLatin}
           </p>
-          <h1 className="my-2 text-5xl font-bold font-mono bg-gradient-to-br from-slate-50 to-slate-300 bg-clip-text text-transparent">
+          <h1 className="my-2 text-5xl font-bold font-mono bg-gradient-to-br from-slate-50 to-slate-300 bg-clip-text text-transparent font-amiri">
             {data.nama}
           </h1>
           <p className="text-lg text-slate-400">{data.arti}</p>

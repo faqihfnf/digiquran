@@ -100,7 +100,7 @@ export default function Home() {
                     <p className="text-sm text-slate-400">{surah.arti}</p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="font-mono text-2xl text-cyan-400/80">
+                    <p className="font-amiri text-2xl text-cyan-400/80">
                       {surah.nama}
                     </p>
                     <p className="text-xs text-slate-500 mt-1">

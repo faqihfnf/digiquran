@@ -20,16 +20,16 @@ export default function AyatToolbar({
       <button
         onClick={onTafsirClick}
         title="Lihat Tafsir"
-        className="flex items-center gap-2 rounded-lg p-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-cyan-400 cursor-pointer">
+        className="flex items-center gap-2 rounded-lg p-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-emerald-400 cursor-pointer">
         <BookOpen className="h-5 w-5" />
       </button>
       <button
         onClick={onBookmarkClick}
         title={isBookmarked ? "Hapus Bookmark" : "Tandai Ayat"}
-        className="flex items-center gap-2 rounded-lg p-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-yellow-400 cursor-pointer">
+        className="flex items-center gap-2 rounded-lg p-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-lime-400 cursor-pointer">
         <BookmarkIcon
           className={`h-5 w-5 ${
-            isBookmarked ? "fill-yellow-400 text-yellow-400" : ""
+            isBookmarked ? "fill-lime-400 text-lime-400" : ""
           }`}
         />
       </button>
@@ -38,8 +38,8 @@ export default function AyatToolbar({
         title={currentlyPlaying ? "Hentikan" : "Putar Audio"}
         className={`flex w-24 items-center justify-center gap-2 rounded-lg p-2 text-sm transition-colors cursor-pointer ${
           currentlyPlaying
-            ? "bg-red-500/20 text-red-400"
-            : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200"
+            ? "bg-red-600 text-white animate-pulse"
+            : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-green-400"
         }`}>
         {currentlyPlaying ? (
           <>
