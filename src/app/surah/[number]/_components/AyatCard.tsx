@@ -29,14 +29,18 @@ export default function AyatCard({
       </div>
       <div className="mb-6 text-right">
         <p
-          className="font-mono text-3xl leading-loose text-slate-100"
+          className="font-mono text-lg sm:text-2xl leading-loose text-slate-100 text-justify"
           dir="rtl">
           {ayat.teksArab}
         </p>
       </div>
       <div className="space-y-4 text-left text-base">
-        <p className="italic text-slate-400">{ayat.teksLatin}</p>
-        <p className="text-slate-300">{ayat.teksIndonesia}</p>
+        <p className="italic text-slate-400 text-sm sm:text-lg text-justify">
+          {ayat.teksLatin}
+        </p>
+        <p className="text-slate-300 text-sm sm:text-lg text-justify">
+          {ayat.teksIndonesia}
+        </p>
       </div>
       <AyatToolbar
         isBookmarked={isBookmarked}
