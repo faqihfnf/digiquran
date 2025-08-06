@@ -1,14 +1,7 @@
 "use client";
 
+import { BookmarkItem } from "@/types/types";
 import { useState, useEffect } from "react";
-
-//# Interface untuk item bookmark
-export interface BookmarkItem {
-  nomorSurah: number;
-  namaSurah: string;
-  nomorAyat: number;
-  teksArab: string;
-}
 
 //# Key untuk menyimpan data di localStorage
 const BOOKMARKS_KEY = "quran_bookmarks";

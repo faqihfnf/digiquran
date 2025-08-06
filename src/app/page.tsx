@@ -1,18 +1,11 @@
 "use client";
 
+import { Surah } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { BookmarkIcon, BookOpen, Search } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-
-interface Surah {
-  nomor: number;
-  nama: string;
-  namaLatin: string;
-  jumlahAyat: number;
-  arti: string;
-}
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");

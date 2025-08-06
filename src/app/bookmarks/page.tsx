@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useBookmarks, BookmarkItem } from "@/hooks/useBookmark";
+import { useBookmarks } from "@/hooks/useBookmark";
 import { ArrowLeftIcon, BookmarkIcon, Trash2Icon } from "lucide-react";
+import { BookmarkItem } from "@/types/types";
 
 export default function BookmarksPage() {
   const { bookmarks, toggleBookmark } = useBookmarks();
