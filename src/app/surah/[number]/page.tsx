@@ -188,9 +188,9 @@ export default function SurahDetailPage() {
               </Link>
               <Link
                 href="/bookmarks"
-                className="inline-flex items-center text-slate-100 hover:text-indigo-500 transition-colors">
-                <BookmarkIcon className="w-5 h-5 mr-1" />
-                <span className="mt-1">Bookmark</span>
+                className="flex w-full sm:w-auto items-center justify-center gap-2 whitespace-nowrap rounded-full bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-300 transition-colors hover:bg-cyan-500/20 hover:text-cyan-200 border border-cyan-500/20">
+                <BookmarkIcon className="h-4 w-4" />
+                Bookmark
               </Link>
             </div>
             <div className="text-center bg-slate-800 rounded-lg p-6 border border-slate-700">

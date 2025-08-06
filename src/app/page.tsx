@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { BookmarkIcon, Search } from "lucide-react";
+import { BookmarkIcon, BookOpen, Search } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -15,7 +15,6 @@ interface Surah {
 }
 
 export default function Home() {
-  //# State untuk menyimpan input pencarian surah
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data, isLoading, isError } = useQuery<Surah[]>({
@@ -24,10 +23,9 @@ export default function Home() {
       const res = await axios.get("https://equran.id/api/v2/surat");
       return res.data.data;
     },
+    staleTime: 1000 * 60 * 60, // Cache data selama 1 jam
   });
 
-  //# Filter data berdasarkan searchTerm
-  //* Pencarian akan mencocokkan nama Latin, nama Arab, atau arti surah
   const filteredSurah = data?.filter(
     (surah) =>
       surah.namaLatin.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -35,94 +33,96 @@ export default function Home() {
       surah.arti.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  //# Render ketika data masih loading atau error saat mengambil data dari API
   if (isLoading)
     return (
-      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-        </div>
+      <div className="flex h-screen w-full items-center justify-center bg-gray-950">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-cyan-400"></div>
       </div>
     );
+
   if (isError)
     return (
-      <h1 className="text-center mt-20 text-red-500 text-2xl">
-        Gagal memuat daftar surah. Silakan coba lagi.
-      </h1>
+      <div className="flex h-screen w-full items-center justify-center bg-gray-950 px-4 text-center">
+        <h1 className="text-xl text-red-400">
+          Gagal memuat daftar surah. Periksa koneksi internet Anda.
+        </h1>
+      </div>
     );
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
-      <main className="container mx-auto p-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="xl:text-7xl md:text-6xl text-4xl bg-gradient-to-l from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-md font-extrabold text-transparent h-20 mt-10 mb-1">
-            Al-Qur'an Digital
-          </h1>
-          <p className="text-slate-200 text-lg">
-            Aplikasi Quran Digital dengan{" "}
-            <span className="bg-cyan-400 rounded-lg px-0.5">Tafsir</span> dan{" "}
-            <span className="bg-emerald-400 rounded-lg px-0.5">Bookmark</span>{" "}
-            Ayat
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-gray-900 to-slate-950 text-slate-100">
+      <main className="container mx-auto px-4 py-12 md:py-16">
+        {/* Header Section */}
+        <header className="text-center mb-10 md:mb-12">
+          <div className="mb-4 flex justify-center items-center gap-3">
+            <h1 className="text-4xl h-16 md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-300 to-emerald-400 bg-clip-text text-transparent">
+              Al-Qur'an Digital
+            </h1>
+          </div>
+          <p className="max-w-xl mx-auto text-slate-400">
+            Jelajahi, baca, dan pelajari ayat-ayat suci Al-Qur'an dengan
+            terjemahan, tafsir, dan fitur bookmark.
           </p>
-        </div>
+        </header>
 
-        {/* Input pencarian surah */}
-        <div className="max-w-xl mx-auto mb-8">
-          <div className="relative gap-2">
-            <span className="absolute inset-y-0 left-0 pl-4 flex items-center">
-              <Search className="text-slate-500 h-5 w-5 mr-5" />
-            </span>
+        {/* Search and Bookmarks Section */}
+        <div className="sticky top-4 z-10 mb-8 flex flex-row items-center justify-center gap-2 max-w-2xl mx-auto px-4 py-2 bg-slate-800/50 backdrop-blur-sm border border-slate-700/80 rounded-full">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
             <input
               type="text"
-              placeholder="Cari nama surah : e.g. Al-Fatihah, الْفَاتِحَة, Pembukaan"
+              placeholder="Cari Surah..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full py-3 pl-10 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-700"
+              className="w-full bg-transparent pl-10 pr-4 py-2 text-white placeholder-slate-500 focus:outline-none"
             />
           </div>
-        </div>
-
-        <div className="xl:pl-12 pb-2">
           <Link
             href="/bookmarks"
-            className="inline-flex items-center text-slate-100 font-semibold transition-colors hover:text-indigo-500">
-            <BookmarkIcon className="w-6 h-6 mr-2" />
-            <span className="text-lg ">Lihat Bookmark</span>
+            className="flex sm:w-auto items-center justify-center gap-2 whitespace-nowrap rounded-full bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-300 transition-colors hover:bg-cyan-500/20 hover:text-cyan-200 border border-cyan-500/20">
+            <BookmarkIcon className="h-4 w-4" />
+            <span className="hidden sm:block">Bookmark</span>
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
-          {/* Render daftar surah berdasarkan pencarian surah */}
+
+        {/* Surah List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredSurah && filteredSurah.length > 0 ? (
             filteredSurah.map((surah) => (
               <Link
                 key={surah.nomor}
                 href={`/surah/${surah.nomor}`}
-                className="block py-8 px-4 bg-slate-800 rounded-lg hover:bg-slate-700/70 transition-colors duration-200 border border-slate-700 hover:border-indigo-600 shadow-lg hover:shadow-indigo-500/20">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center justify-center h-12 w-12 bg-slate-700 rounded-full text-sm font-bold">
-                      {surah.nomor}
-                    </div>
-                    <div>
-                      <h2 className="font-bold text-lg">{surah.namaLatin}</h2>
-                      <p className="text-sm text-slate-400">{surah.arti}</p>
-                      <p className="text-xs text-slate-500 mt-1">
-                        {surah.jumlahAyat} ayat
-                      </p>
-                    </div>
+                className="group relative block overflow-hidden rounded-xl bg-slate-800/80 p-5 py-10 transition-all duration-300 ease-in-out hover:bg-slate-800/90 border border-slate-700/80 hover:border-cyan-500/50 hover:shadow-2xl hover:shadow-cyan-500/10">
+                {/* Decorative Glow Effect */}
+                <div className="absolute -top-1/2 -right-1/2 w-full h-full bg-cyan-400/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                <div className="relative flex items-center gap-4">
+                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-slate-700 text-lg font-bold text-slate-300 transition-colors duration-300 group-hover:bg-cyan-400 group-hover:text-slate-900">
+                    {surah.nomor}
                   </div>
-                  <div className="text-right">
-                    <p className="font-mono text-xl text-slate-300">
+                  <div className="flex-grow">
+                    <h2 className="font-bold text-lg text-slate-100">
+                      {surah.namaLatin}
+                    </h2>
+                    <p className="text-sm text-slate-400">{surah.arti}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="font-mono text-2xl text-cyan-400/80">
                       {surah.nama}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {surah.jumlahAyat} ayat
                     </p>
                   </div>
                 </div>
               </Link>
             ))
           ) : (
-            <div className="col-span-full text-center text-slate-400 py-10">
-              {/* Render pesan jika surah tidak ditemukan */}
-              <p className="text-2xl">Surah tidak ditemukan.</p>
+            <div className="col-span-full py-20 text-center text-slate-500">
+              <p className="text-2xl font-semibold">Surah tidak ditemukan</p>
+              <p className="mt-2">
+                Coba gunakan kata kunci lain untuk pencarian.
+              </p>
             </div>
           )}
         </div>
