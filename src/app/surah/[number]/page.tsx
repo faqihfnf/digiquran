@@ -1,29 +1,35 @@
 "use client";
 
+// --- IMPORTS ---
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useBookmarks } from "@/hooks/useBookmark";
+
+// Impor semua tipe dari satu file terpusat
+import type { Ayat, SurahDetail, Tafsir, TafsirData } from "@/types/types";
+
+// Impor komponen-komponen
 import TafsirModal from "@/components/TafsirModal";
 import SurahHeader from "./_components/SurahHeader";
 import AyatCard from "./_components/AyatCard";
 import LoadingState from "./_components/LoadingState";
 import ErrorState from "./_components/ErrorState";
-import { SurahDetail, Tafsir, TafsirData } from "@/types/types";
 import SurahNavigation from "./_components/SurahNavigation";
 
+// --- COMPONENT UTAMA ---
 export default function SurahDetailPage() {
   const params = useParams();
   const nomorSurah = params.number as string;
 
-  //# State Management
+  // --- STATE MANAGEMENT ---
   const [currentlyPlaying, setCurrentlyPlaying] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toggleBookmark, isBookmarked } = useBookmarks();
   const [selectedTafsir, setSelectedTafsir] = useState<Tafsir | null>(null);
 
-  //# Data Fetching
+  // --- DATA FETCHING ---
   const {
     data,
     isLoading: isSurahLoading,
@@ -55,7 +61,7 @@ export default function SurahDetailPage() {
     enabled: !!nomorSurah,
   });
 
-  //# Scroll to the specific ayat if a hash is present in the URL
+  // --- EFFECTS ---
   useEffect(() => {
     if (!isSurahLoading && data) {
       const hash = window.location.hash;
@@ -68,7 +74,7 @@ export default function SurahDetailPage() {
     }
   }, [isSurahLoading, data]);
 
-  //# functions for handling audio playback and tafsir display
+  // --- HANDLER FUNCTIONS ---
   const playAudio = (audioUrl: string, ayatNumber: number) => {
     if (audioRef.current) {
       audioRef.current.pause();
@@ -91,7 +97,20 @@ export default function SurahDetailPage() {
     if (tafsirAyat) setSelectedTafsir(tafsirAyat);
   };
 
-  //# Rendering the component
+  const handleCopyToClipboard = (ayat: Ayat, surahName: string) => {
+    const textToCopy = `
+"${ayat.teksArab}"
+
+(${ayat.teksIndonesia})
+
+- QS. ${surahName}: ${ayat.nomorAyat}
+    `;
+    navigator.clipboard
+      .writeText(textToCopy.trim())
+      .catch((err) => console.error("Gagal menyalin teks: ", err));
+  };
+
+  // --- RENDER LOGIC ---
   if (isSurahLoading || isTafsirLoading) return <LoadingState />;
   if (isSurahError || isTafsirError || !data || !tafsirData)
     return <ErrorState />;
@@ -101,13 +120,12 @@ export default function SurahDetailPage() {
       <div className="min-h-screen w-full bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900 text-slate-100">
         <main className="container mx-auto max-w-4xl px-4 py-8">
           <SurahHeader data={data} />
+
           <div className="flex flex-col divide-y divide-slate-800">
             {data.ayat.map((ayat) => (
               <AyatCard
                 key={ayat.nomorAyat}
                 ayat={ayat}
-                surahNumber={data.nomor}
-                surahName={data.namaLatin}
                 isBookmarked={isBookmarked(data.nomor, ayat.nomorAyat)}
                 currentlyPlaying={currentlyPlaying === ayat.nomorAyat}
                 onTafsirClick={() => handleShowTafsir(ayat.nomorAyat)}
@@ -120,16 +138,18 @@ export default function SurahDetailPage() {
                   })
                 }
                 onPlayClick={() => playAudio(ayat.audio["01"], ayat.nomorAyat)}
+                onCopyClick={() => handleCopyToClipboard(ayat, data.namaLatin)}
               />
             ))}
           </div>
-          {/* Surah Navigation */}
+
           <SurahNavigation
             prev={data.suratSebelumnya}
             next={data.suratSelanjutnya}
           />
         </main>
       </div>
+
       {selectedTafsir && (
         <TafsirModal
           isOpen={!!selectedTafsir}
