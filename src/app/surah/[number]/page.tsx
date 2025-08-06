@@ -64,7 +64,6 @@ export default function SurahDetailPage() {
   const { toggleBookmark, isBookmarked } = useBookmarks();
   const [selectedTafsir, setSelectedTafsir] = useState<Tafsir | null>(null);
 
-  //# Fetching data Surah dan Tafsir menggunakan React Query
   const {
     data,
     isLoading: isSurahLoading,
@@ -96,7 +95,6 @@ export default function SurahDetailPage() {
     enabled: !!nomorSurah,
   });
 
-  //# Scroll ke ayat tertentu jika ada hash di URL
   useEffect(() => {
     if (!isSurahLoading && data) {
       const hash = window.location.hash;
@@ -109,15 +107,14 @@ export default function SurahDetailPage() {
     }
   }, [isSurahLoading, data]);
 
-  //# Fungsi untuk memutar audio
   const playAudio = (audioUrl: string, ayatNumber: number) => {
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current = null;
-    }
-    if (currentlyPlaying === ayatNumber) {
-      setCurrentlyPlaying(null);
-      return;
+      if (currentlyPlaying === ayatNumber) {
+        setCurrentlyPlaying(null);
+        audioRef.current = null;
+        return;
+      }
     }
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
@@ -126,14 +123,8 @@ export default function SurahDetailPage() {
       console.error("Error playing audio:", error);
       setCurrentlyPlaying(null);
     });
-    audio.onended = () => {
-      setCurrentlyPlaying(null);
-      audioRef.current = null;
-    };
-    audio.onerror = () => {
-      setCurrentlyPlaying(null);
-      audioRef.current = null;
-    };
+    audio.onended = () => setCurrentlyPlaying(null);
+    audio.onerror = () => setCurrentlyPlaying(null);
   };
 
   const handleShowTafsir = (ayatNumber: number) => {
@@ -144,162 +135,147 @@ export default function SurahDetailPage() {
     }
   };
 
-  //# Render ketika data masih loading
   if (isSurahLoading || isTafsirLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-        </div>
+      <div className="flex h-screen w-full items-center justify-center bg-gray-950">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-cyan-400"></div>
       </div>
     );
   }
 
   if (isSurahError || isTafsirError || !data || !tafsirData) {
     return (
-      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 text-lg">
-            Terjadi kesalahan saat memuat data!
-          </p>
-          <p className="text-slate-400 mt-2">Silakan coba lagi nanti.</p>
-          <Link
-            href="/"
-            className="inline-block mt-4 px-4 py-2 bg-slate-700 rounded hover:bg-slate-600 transition-colors">
-            Kembali ke Beranda
-          </Link>
-        </div>
+      <div className="flex h-screen w-full items-center justify-center bg-gray-950 px-4 text-center">
+        <h1 className="text-xl text-red-400">
+          Gagal memuat data. Periksa koneksi internet Anda.
+        </h1>
       </div>
     );
   }
 
   return (
     <>
-      <div className="min-h-screen bg-slate-900 text-white">
-        <main className="container mx-auto p-4 py-8 max-w-4xl">
+      <div className="min-h-screen w-full bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900 text-slate-100">
+        <main className="container mx-auto max-w-4xl px-4 py-8">
           {/* Header */}
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              <Link
-                href="/"
-                className="inline-flex items-center text-slate-100 hover:text-indigo-500 transition-colors">
-                <ArrowLeftIcon className="w-5 h-5 mr-2" />
-                Kembali
-              </Link>
-              <Link
-                href="/bookmarks"
-                className="flex w-full sm:w-auto items-center justify-center gap-2 whitespace-nowrap rounded-full bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-300 transition-colors hover:bg-cyan-500/20 hover:text-cyan-200 border border-cyan-500/20">
-                <BookmarkIcon className="h-4 w-4" />
-                Bookmark
-              </Link>
-            </div>
-            <div className="text-center bg-slate-800 rounded-lg p-6 border border-slate-700">
-              <h1 className="text-3xl font-bold mb-2">{data.namaLatin}</h1>
-              <p className="text-4xl font-mono mb-2 text-slate-300">
-                {data.nama}
-              </p>
-              <p className="text-slate-400 mb-2">{data.arti}</p>
-              <div className="flex justify-center gap-4 text-sm text-slate-500">
-                <span className="flex items-center">
-                  <NotebookText className="w-4 h-4 mr-1" />
-                  {data.jumlahAyat} Ayat
-                </span>
-                <span>•</span>
-                <span className="flex items-center">
-                  <Globe className="w-4 h-4 mr-1" />
-                  {data.tempatTurun}
-                </span>
+          <header className="relative mb-8 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 p-6 md:p-8">
+            <div className="absolute -right-20 -top-20 h-48 w-48 bg-cyan-500/10 blur-3xl"></div>
+            <div className="absolute -left-20 -bottom-20 h-48 w-48 bg-emerald-500/10 blur-3xl"></div>
+
+            <div className="relative z-10">
+              <div className="mb-6 flex items-center justify-between">
+                <Link
+                  href="/"
+                  className="flex items-center gap-2 text-slate-300 transition-colors hover:text-cyan-400">
+                  <ArrowLeftIcon className="h-5 w-5" />
+                  <span>Daftar Surah</span>
+                </Link>
+                <Link
+                  href="/bookmarks"
+                  className="flex items-center gap-2 text-slate-300 transition-colors hover:text-cyan-400">
+                  <BookmarkIcon className="h-5 w-5" />
+                  <span>Bookmark</span>
+                </Link>
               </div>
-              <p
-                className="text-slate-400 mt-2 text-justify"
-                dangerouslySetInnerHTML={{ __html: data.deskripsi }}></p>
+              <div className="text-center">
+                <p className="text-lg font-semibold text-cyan-400">
+                  {data.namaLatin}
+                </p>
+                <h1 className="my-2 text-5xl font-bold font-mono bg-gradient-to-br from-slate-50 to-slate-300 bg-clip-text text-transparent">
+                  {data.nama}
+                </h1>
+                <p className="text-lg text-slate-400">{data.arti}</p>
+                <div className="mt-4 flex items-center justify-center gap-4 text-sm text-slate-500">
+                  <span className="flex items-center gap-1.5 rounded-full bg-slate-800 px-3 py-1">
+                    <NotebookText className="h-4 w-4" /> {data.jumlahAyat} Ayat
+                  </span>
+                  <span className="flex items-center gap-1.5 rounded-full bg-slate-800 px-3 py-1">
+                    <Globe className="h-4 w-4" /> {data.tempatTurun}
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
+          </header>
 
           {/* Ayat List */}
-          <div className="space-y-6">
+          <div className="flex flex-col divide-y divide-slate-800">
             {data.ayat.map((ayat) => {
               const bookmarked = isBookmarked(data.nomor, ayat.nomorAyat);
               return (
                 <div
                   key={ayat.nomorAyat}
                   id={`ayat-${ayat.nomorAyat}`}
-                  className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center justify-center h-8 w-8 bg-slate-700 rounded-full text-sm font-bold">
+                  className="py-5">
+                  <div className="mb-6 flex items-center justify-between">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-md border border-slate-700 bg-slate-800 text-lg font-bold text-cyan-400">
                       {ayat.nomorAyat}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleShowTafsir(ayat.nomorAyat)}
-                        title="Lihat Tafsir"
-                        className="p-2 rounded-lg text-slate-400 hover:text-sky-400 hover:bg-slate-600 transition-colors cursor-pointer">
-                        <BookOpen className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() =>
-                          toggleBookmark({
-                            nomorSurah: data.nomor,
-                            namaSurah: data.namaLatin,
-                            nomorAyat: ayat.nomorAyat,
-                            teksArab: ayat.teksArab,
-                          })
-                        }
-                        title={
-                          bookmarked ? "Hapus Bookmark" : "Tambah Bookmark"
-                        }
-                        className="p-2 rounded-lg text-slate-400 hover:bg-slate-600 hover:text-yellow-500 transition-colors cursor-pointer ">
-                        <BookmarkIcon
-                          className={`w-5 h-5 ${
-                            bookmarked
-                              ? "fill-yellow-400 text-yellow-400"
-                              : "hover:text-yellow-500"
-                          }`}
-                        />
-                      </button>
-                      <button
-                        onClick={() =>
-                          playAudio(ayat.audio["01"], ayat.nomorAyat)
-                        }
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                          currentlyPlaying === ayat.nomorAyat
-                            ? "bg-red-600 hover:bg-red-700 text-white cursor-pointer animate-pulse"
-                            : "bg-slate-700 hover:bg-slate-600 text-slate-300 cursor-pointer"
-                        }`}
-                        title={
-                          currentlyPlaying === ayat.nomorAyat
-                            ? "Stop Audio"
-                            : "Play Audio"
-                        }>
-                        {currentlyPlaying === ayat.nomorAyat ? (
-                          <StopCircle className="w-4 h-4" />
-                        ) : (
-                          <Play className="w-4 h-4" />
-                        )}
-                        <span className="text-sm">
-                          {currentlyPlaying === ayat.nomorAyat
-                            ? "Stop"
-                            : "Play"}
-                        </span>
-                      </button>
-                    </div>
                   </div>
-                  <div className="text-right mb-4">
+
+                  <div className="mb-6 text-right">
                     <p
-                      className="text-2xl leading-loose font-mono text-slate-200"
+                      className="font-mono text-3xl leading-loose text-slate-100"
                       dir="rtl">
                       {ayat.teksArab}
                     </p>
                   </div>
-                  <div className="mb-4">
-                    <p className="text-slate-400 italic leading-relaxed">
-                      {ayat.teksLatin}
-                    </p>
+
+                  <div className="space-y-4 text-left text-base">
+                    <p className="italic text-slate-400">{ayat.teksLatin}</p>
+                    <p className="text-slate-300">{ayat.teksIndonesia}</p>
                   </div>
-                  <div className="mb-4">
-                    <p className="text-slate-200 leading-relaxed">
-                      {ayat.teksIndonesia}
-                    </p>
+
+                  {/* Action Toolbar */}
+                  <div className="mt-6 flex items-center justify-end gap-2 border-t border-slate-800 pt-5">
+                    <button
+                      onClick={() => handleShowTafsir(ayat.nomorAyat)}
+                      title="Lihat Tafsir"
+                      className="flex items-center gap-2 rounded-lg p-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-cyan-400">
+                      <BookOpen className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={() =>
+                        toggleBookmark({
+                          nomorSurah: data.nomor,
+                          namaSurah: data.namaLatin,
+                          nomorAyat: ayat.nomorAyat,
+                          teksArab: ayat.teksArab,
+                        })
+                      }
+                      title={bookmarked ? "Hapus Bookmark" : "Tandai Ayat"}
+                      className="flex items-center gap-2 rounded-lg p-2 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-yellow-400">
+                      <BookmarkIcon
+                        className={`h-5 w-5 ${
+                          bookmarked ? "fill-yellow-400 text-yellow-400" : ""
+                        }`}
+                      />
+                    </button>
+                    <button
+                      onClick={() =>
+                        playAudio(ayat.audio["01"], ayat.nomorAyat)
+                      }
+                      title={
+                        currentlyPlaying === ayat.nomorAyat
+                          ? "Hentikan"
+                          : "Putar Audio"
+                      }
+                      className={`flex w-24 items-center justify-center gap-2 rounded-lg p-2 text-sm transition-colors ${
+                        currentlyPlaying === ayat.nomorAyat
+                          ? "bg-red-500/20 text-red-400"
+                          : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200"
+                      }`}>
+                      {currentlyPlaying === ayat.nomorAyat ? (
+                        <>
+                          {" "}
+                          <StopCircle className="h-5 w-5" /> Stop{" "}
+                        </>
+                      ) : (
+                        <>
+                          {" "}
+                          <Play className="h-5 w-5" /> Play{" "}
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
               );
@@ -308,7 +284,6 @@ export default function SurahDetailPage() {
         </main>
       </div>
 
-      {/* Render Modal */}
       {selectedTafsir && (
         <TafsirModal
           isOpen={!!selectedTafsir}

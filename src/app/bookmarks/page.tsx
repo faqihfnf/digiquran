@@ -1,82 +1,85 @@
 "use client";
 
 import Link from "next/link";
-import { useBookmarks, BookmarkItem } from "@/hooks/useBookmark"; // Impor hook dan interface
+import { useBookmarks, BookmarkItem } from "@/hooks/useBookmark";
 import { ArrowLeftIcon, BookmarkIcon, Trash2Icon } from "lucide-react";
 
 export default function BookmarksPage() {
-  //# Menggunakan hook useBookmarks
   const { bookmarks, toggleBookmark } = useBookmarks();
 
+  const handleDelete = (e: React.MouseEvent, item: BookmarkItem) => {
+    // Mencegah navigasi saat tombol hapus di-klik
+    e.preventDefault();
+    e.stopPropagation();
+    toggleBookmark(item);
+  };
+
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
-      <main className="container mx-auto p-4 py-8 max-w-4xl">
-        <div className="text-center flex flex-col items-center mb-8">
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <BookmarkIcon className="w-8 h-8 text-yellow-400" />
-            Ayat Tersimpan
-          </h1>
-          <p className="text-slate-400 mt-1">Daftar bookmark ayat</p>
-        </div>
-        <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen w-full bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900 text-slate-100">
+      <main className="container mx-auto max-w-4xl px-4 py-12 md:py-16">
+        {/* Header */}
+        <header className="relative mb-10 text-center">
           <Link
             href="/"
-            className="inline-flex items-center text-slate-400 hover:text-white transition-colors">
-            <ArrowLeftIcon className="w-5 h-5 mr-2" />
-            Kembali
+            className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-2 text-slate-300 transition-colors hover:text-cyan-400">
+            <ArrowLeftIcon className="h-5 w-5" />
+            <span className="hidden sm:inline">Kembali</span>
           </Link>
-          <span className="text-slate-400">
-            Bookmark : <strong>{bookmarks.length}</strong> Ayat
-          </span>
-        </div>
+          <div className="inline-flex flex-col items-center">
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-300 to-emerald-400 bg-clip-text text-transparent">
+              Ayat Tersimpan
+            </h1>
+            <p className="mt-1 text-slate-400">
+              {bookmarks.length} ayat ditandai
+            </p>
+          </div>
+        </header>
 
         {/* Daftar Bookmark */}
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4">
           {bookmarks.length > 0 ? (
             bookmarks.map((item: BookmarkItem) => (
-              <div
+              <Link
                 key={`${item.nomorSurah}-${item.nomorAyat}`}
-                className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    {/* Link ke Surah dan Ayat yang spesifik */}
-                    <Link
-                      href={`/surah/${item.nomorSurah}#ayat-${item.nomorAyat}`}
-                      className="text-lg font-bold hover:text-sky-400 transition-colors">
-                      {item.namaSurah} : {item.nomorAyat}
-                    </Link>
-                    {/* Tombol Hapus Bookmark */}
+                href={`/surah/${item.nomorSurah}#ayat-${item.nomorAyat}`}
+                className="group relative block overflow-hidden rounded-xl bg-slate-800/80 p-5 transition-all duration-300 ease-in-out hover:bg-slate-800/90 border border-slate-700/80 hover:border-cyan-500/50 hover:shadow-2xl hover:shadow-cyan-500/10">
+                {/* Decorative Glow Effect */}
+                <div className="absolute -top-1/4 -right-1/4 h-1/2 w-1/2 bg-cyan-400/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between gap-4">
+                    <h2 className="text-xl font-bold text-slate-100 transition-colors group-hover:text-cyan-400">
+                      {item.namaSurah}: Ayat {item.nomorAyat}
+                    </h2>
                     <button
-                      onClick={() => toggleBookmark(item)}
+                      onClick={(e) => handleDelete(e, item)}
                       title="Hapus Bookmark"
-                      className="p-2 text-slate-400 hover:text-red-500 rounded-full hover:bg-slate-700 transition-colors">
-                      <Trash2Icon className="w-5 h-5" />
+                      className="flex-shrink-0 rounded-full p-2 text-slate-500 transition-colors hover:bg-red-500/10 hover:text-red-400">
+                      <Trash2Icon className="h-5 w-5" />
                     </button>
                   </div>
-                  <Link
-                    href={`/surah/${item.nomorSurah}#ayat-${item.nomorAyat}`}
-                    className="text-xl leading-loose font-mono text-slate-200 text-right"
+                  <p
+                    className="mt-4 font-mono text-2xl leading-loose text-slate-200 text-right"
                     dir="rtl">
                     {item.teksArab}
-                  </Link>
+                  </p>
                 </div>
-              </div>
+              </Link>
             ))
           ) : (
-            //# Pesan jika tidak ada bookmark
-            <div className="text-center py-20 bg-slate-800 rounded-lg border border-slate-700">
-              <BookmarkIcon className="w-16 h-16 mx-auto text-slate-600 mb-4" />
-              <h2 className="text-xl font-semibold text-slate-300">
+            // Pesan jika tidak ada bookmark
+            <div className="rounded-xl border border-dashed border-slate-700 bg-slate-800/50 py-20 text-center">
+              <BookmarkIcon className="mx-auto h-16 w-16 text-slate-600" />
+              <h2 className="mt-4 text-2xl font-semibold text-slate-300">
                 Belum Ada Ayat Tersimpan
               </h2>
-              <p className="text-slate-400 mt-2">
-                Anda bisa menandai ayat dengan menekan ikon bookmark di halaman
-                detail surah.
+              <p className="mx-auto mt-2 max-w-sm text-slate-400">
+                Tandai ayat favorit Anda di halaman detail surah untuk
+                menyimpannya di sini.
               </p>
               <Link
                 href="/"
-                className="inline-block mt-6 px-5 py-2 bg-sky-600 rounded-lg hover:bg-sky-500 transition-colors">
-                Cari Surah
+                className="mt-6 inline-block rounded-lg bg-cyan-500/20 px-6 py-2 font-semibold text-cyan-300 transition-colors hover:bg-cyan-500/30">
+                Mulai Membaca
               </Link>
             </div>
           )}
