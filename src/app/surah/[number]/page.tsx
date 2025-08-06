@@ -11,6 +11,7 @@ import AyatCard from "./_components/AyatCard";
 import LoadingState from "./_components/LoadingState";
 import ErrorState from "./_components/ErrorState";
 import { SurahDetail, Tafsir, TafsirData } from "@/types/types";
+import SurahNavigation from "./_components/SurahNavigation";
 
 export default function SurahDetailPage() {
   const params = useParams();
@@ -122,6 +123,11 @@ export default function SurahDetailPage() {
               />
             ))}
           </div>
+          {/* Surah Navigation */}
+          <SurahNavigation
+            prev={data.suratSebelumnya}
+            next={data.suratSelanjutnya}
+          />
         </main>
       </div>
       {selectedTafsir && (

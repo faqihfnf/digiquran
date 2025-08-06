@@ -22,6 +22,14 @@ export interface Ayat {
   };
 }
 
+// Tipe untuk link navigasi
+export interface SurahNavigationLink {
+  nomor: number;
+  nama: string;
+  namaLatin: string;
+  jumlahAyat: number;
+}
+
 // Tipe untuk data detail sebuah surah
 export interface SurahDetail {
   nomor: number;
@@ -32,6 +40,8 @@ export interface SurahDetail {
   jumlahAyat: number;
   tempatTurun: string;
   ayat: Ayat[];
+  suratSebelumnya: SurahNavigationLink | false;
+  suratSelanjutnya: SurahNavigationLink | false;
 }
 
 // Tipe untuk satu item tafsir
