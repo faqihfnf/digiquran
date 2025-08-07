@@ -32,7 +32,7 @@ export default function AyatCard({
       {/* Teks Arab */}
       <div className="mb-6 text-right">
         <p
-          className="text-lg sm:text-2xl font-amiri leading-16 text-slate-100 text-justify"
+          className="text-lg sm:text-2xl font-amiri leading-12 sm:leading-16 text-slate-100 text-justify"
           dir="rtl">
           {ayat.teksArab}
         </p>

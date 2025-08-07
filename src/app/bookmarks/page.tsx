@@ -58,7 +58,7 @@ export default function BookmarksPage() {
                   </button>
                 </div>
                 <p
-                  className="text-lg sm:text-2xl mt-4 leading-16 text-slate-200 font-amiri text-justify"
+                  className="text-lg sm:text-2xl mt-4 leading-12 sm:leading-16 text-slate-200 font-amiri text-justify"
                   dir="rtl">
                   {item.teksArab}
                 </p>
