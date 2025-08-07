@@ -1,11 +1,9 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
 import { Surah } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Book, BookmarkIcon, BookOpen, Search } from "lucide-react";
-import Image from "next/image";
+import { BookmarkIcon, Search } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -50,12 +48,12 @@ export default function Home() {
       <header className="text-center mb-4 md:mb-6">
         <div className="mb-4 flex justify-center items-center gap-3">
           <h1 className="text-4xl h-14 md:text-5xl font-extrabold tracking-tight bg-gradient-to-tl from-cyan-300 to-emerald-400 bg-clip-text text-transparent">
-            Al-Qur'an Digital
+            Al-Qur&apos;an Digital
           </h1>
         </div>
         <p className="max-w-xl mx-auto text-slate-400">
-          Jelajahi, baca, dan pelajari ayat-ayat suci Al-Qur'an dengan
-          terjemahan, tafsir, dan fitur bookmark.
+          Jelajahi, baca, dan pelajari ayat-ayat suci Al-Qur&apos;an Digital
+          dengan terjemahan, tafsir, dan fitur bookmark.
         </p>
       </header>
 
