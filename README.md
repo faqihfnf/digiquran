@@ -75,14 +75,6 @@ A modern digital Al-Qur'an web application built with Next.js, React, and Tailwi
 - `src/types/` - TypeScript type definitions
 - `public/` - Static assets
 
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request for improvements or bug fixes.
-
-## License
-
-This project is licensed under the MIT License.
-
 ---
 
 > Built with ❤️ Faqih Nur Fahmi.
