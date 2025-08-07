@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function ErrorState() {
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-gray-950 px-4 text-center">
+    <div className="flex h-screen w-full items-center justify-center px-4 text-center">
       <div>
         <h1 className="text-xl text-red-400">Gagal memuat data.</h1>
         <p className="text-slate-400 mt-1">

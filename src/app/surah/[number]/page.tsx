@@ -29,7 +29,6 @@ export default function SurahDetailPage() {
   const { toggleBookmark, isBookmarked } = useBookmarks();
   const [selectedTafsir, setSelectedTafsir] = useState<Tafsir | null>(null);
 
-  // --- DATA FETCHING ---
   const {
     data,
     isLoading: isSurahLoading,
@@ -61,7 +60,6 @@ export default function SurahDetailPage() {
     enabled: !!nomorSurah,
   });
 
-  // --- EFFECTS ---
   useEffect(() => {
     if (!isSurahLoading && data) {
       const hash = window.location.hash;
@@ -117,38 +115,35 @@ export default function SurahDetailPage() {
 
   return (
     <>
-      <div className="min-h-screen w-full bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900 text-slate-100">
-        <main className="container mx-auto max-w-4xl px-4 py-8">
-          <SurahHeader data={data} />
+      <main className="container mx-auto max-w-4xl px-4 py-8">
+        <SurahHeader data={data} />
+        <div className="flex flex-col divide-y divide-slate-800">
+          {data.ayat.map((ayat) => (
+            <AyatCard
+              key={ayat.nomorAyat}
+              ayat={ayat}
+              isBookmarked={isBookmarked(data.nomor, ayat.nomorAyat)}
+              currentlyPlaying={currentlyPlaying === ayat.nomorAyat}
+              onTafsirClick={() => handleShowTafsir(ayat.nomorAyat)}
+              onBookmarkClick={() =>
+                toggleBookmark({
+                  nomorSurah: data.nomor,
+                  namaSurah: data.namaLatin,
+                  nomorAyat: ayat.nomorAyat,
+                  teksArab: ayat.teksArab,
+                })
+              }
+              onPlayClick={() => playAudio(ayat.audio["01"], ayat.nomorAyat)}
+              onCopyClick={() => handleCopyToClipboard(ayat, data.namaLatin)}
+            />
+          ))}
+        </div>
 
-          <div className="flex flex-col divide-y divide-slate-800">
-            {data.ayat.map((ayat) => (
-              <AyatCard
-                key={ayat.nomorAyat}
-                ayat={ayat}
-                isBookmarked={isBookmarked(data.nomor, ayat.nomorAyat)}
-                currentlyPlaying={currentlyPlaying === ayat.nomorAyat}
-                onTafsirClick={() => handleShowTafsir(ayat.nomorAyat)}
-                onBookmarkClick={() =>
-                  toggleBookmark({
-                    nomorSurah: data.nomor,
-                    namaSurah: data.namaLatin,
-                    nomorAyat: ayat.nomorAyat,
-                    teksArab: ayat.teksArab,
-                  })
-                }
-                onPlayClick={() => playAudio(ayat.audio["01"], ayat.nomorAyat)}
-                onCopyClick={() => handleCopyToClipboard(ayat, data.namaLatin)}
-              />
-            ))}
-          </div>
-
-          <SurahNavigation
-            prev={data.suratSebelumnya}
-            next={data.suratSelanjutnya}
-          />
-        </main>
-      </div>
+        <SurahNavigation
+          prev={data.suratSebelumnya}
+          next={data.suratSelanjutnya}
+        />
+      </main>
 
       {selectedTafsir && (
         <TafsirModal

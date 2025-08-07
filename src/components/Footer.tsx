@@ -3,11 +3,11 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="p-6 bg-[rgb(5,10,35)]">
-      <div className="max-w-7xl mx-auto">
+    <footer className="p-6 bg-[rgb(5,10,35)] bottom-0 w-full">
+      <div className="max-w-8xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           {/* Kiri: Nama */}
-          <p className="text-md text-gray-300 text-center sm:text-left">
+          <p className="text-lg text-gray-300 font-semibold text-center sm:text-left">
             Created with ❤️{" "}
             <span className="bg-gradient-to-l from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-md font-extrabold text-transparent">
               Faqih Nur Fahmi
