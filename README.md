@@ -75,6 +75,11 @@ A modern digital Al-Qur'an web application built with Next.js, React, and Tailwi
 - `src/types/` - TypeScript type definitions
 - `public/` - Static assets
 
+## Demo
+
+A live demo of this repository is deployed at:
+[https://digiquran.vercel.app](https://digiquran.vercel.app)
+
 ---
 
 > Built with ❤️ Faqih Nur Fahmi.
