@@ -115,7 +115,7 @@ export default function SurahDetailPage() {
 
   return (
     <>
-      <main className="container mx-auto max-w-4xl px-4 py-8">
+      <main className="container mx-auto max-w-4xl p-4">
         <SurahHeader data={data} />
         <div className="flex flex-col divide-y divide-slate-800">
           {data.ayat.map((ayat) => (

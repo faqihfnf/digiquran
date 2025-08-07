@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import { Surah } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { BookmarkIcon, BookOpen, Search } from "lucide-react";
+import { Book, BookmarkIcon, BookOpen, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -45,9 +45,9 @@ export default function Home() {
     );
 
   return (
-    <main className="container mx-auto px-4 py-6 md:py-10">
+    <main className="container mx-auto p-4">
       {/* Header Section */}
-      <header className="text-center mb-10 md:mb-12">
+      <header className="text-center mb-4 md:mb-6">
         <div className="mb-4 flex justify-center items-center gap-3">
           <h1 className="text-4xl h-14 md:text-5xl font-extrabold tracking-tight bg-gradient-to-tl from-cyan-300 to-emerald-400 bg-clip-text text-transparent">
             Al-Qur'an Digital
@@ -60,7 +60,7 @@ export default function Home() {
       </header>
 
       {/* Search and Bookmarks Section */}
-      <div className="top-4 z-10 mb-8 flex flex-row items-center justify-center gap-2 max-w-2xl mx-auto px-4 py-2 bg-slate-800/50 backdrop-blur-sm border border-slate-700/80 rounded-full">
+      <div className="top-4 z-10 mb-6 flex flex-row items-center justify-center gap-2 max-w-2xl mx-auto px-4 py-2 bg-slate-800/50 backdrop-blur-sm border border-slate-700/80 rounded-full">
         <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
           <input
@@ -112,11 +112,17 @@ export default function Home() {
             </Link>
           ))
         ) : (
-          <div className="col-span-full py-20 text-center text-slate-500">
-            <p className="text-2xl font-semibold">Surah tidak ditemukan</p>
-            <p className="mt-2">
-              Coba gunakan kata kunci lain untuk pencarian.
-            </p>
+          <div className="col-span-full flex items-center justify-center">
+            <div className="w-full rounded-xl border border-dashed border-slate-700 bg-slate-800/50 py-14 text-center">
+              <Search className="mx-auto h-16 w-16 text-slate-600 animate-pulse" />
+              <h2 className="mt-4 text-2xl font-semibold text-slate-300">
+                Surah Tidak Ditemukan
+              </h2>
+              <p className="mx-auto mt-2 max-w-sm text-slate-400">
+                Kami tidak dapat menemukan surah yang cocok dengan pencarian
+                Anda.
+              </p>
+            </div>
           </div>
         )}
       </div>
