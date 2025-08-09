@@ -4,6 +4,7 @@ import "./globals.css";
 import Provider from "@/provider/Provider";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { Analytics } from "@vercel/analytics/next";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
             <Navbar />
             {/* 2. Tambahkan "flex-grow" pada area konten */}
             <div className="flex-grow">{children}</div>
+            <Analytics />
             <Footer />
           </main>
         </body>
